@@ -1,0 +1,32 @@
+{
+  "appenders":  {
+    "request": {
+      "type": "DateFile",
+      "filename": "./logs/access",
+      "pattern": "-yyyy-MM-dd.log",
+      "alwaysIncludePattern": true,
+      "category": "http"
+    },
+    "application": {
+      "type": "DateFile",
+      "filename": "./logs/application",
+      "pattern": "-yyyy-MM-dd.log",
+      "alwaysIncludePattern": true
+    },
+    "errorFile": {
+      "type": "DateFile",
+      "filename": "./logs/errors",
+      "pattern": "-yyyy-MM-dd.log",
+      "alwaysIncludePattern": true
+    },
+    "errors": {
+      "type": "logLevelFilter",
+      "level": "ERROR",
+      "appender": "errorFile"
+    }
+  },
+  "categories": {
+    "default": { "appenders": ["application", "request"], "level": "info" },
+    "error": { "appenders": ["errors"], "level": "error" }
+  }
+}
