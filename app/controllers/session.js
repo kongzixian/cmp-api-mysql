@@ -2,7 +2,7 @@
 * @Author: kongzx
 * @Date:   2020-02-17 20:52:51
 * @Last Modified by:   kongzx
-* @Last Modified time: 2020-02-20 12:16:57
+* @Last Modified time: 2020-02-25 17:21:25
 */
 
 const db = require('../models/db')
@@ -54,10 +54,7 @@ exports.create = async (req, res, next) =>{
       res.sendErr(errorRes)
     }
     const result = format.user(user)
-    console.log(result)
     result.token = auth.createToken( result.id ) 
-    req.headers.token = result.token
-    req.kong = result
     res.sendOk(result, 201)
     
     // 发送响应

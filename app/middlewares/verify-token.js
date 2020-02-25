@@ -2,22 +2,36 @@
 * @Author: kongzx
 * @Date:   2020-02-19 14:23:50
 * @Last Modified by:   kongzx
-* @Last Modified time: 2020-02-20 00:44:30
+* @Last Modified time: 2020-02-25 22:38:42
 */
  
 'use strict'
 const {auth, resHandler} = require('../myutil')
+const redisClient = require('../redis')
+const {settings} = require('../../config')
 
 module.exports = (req, res, next) => {
   const headers = req.headers
-  if (!headers.token) {
+  const token = headers.token
+  if (!token) {
     const errorRes = resHandler.getErrorRes('TOKEN_IS_MISSING')
     res.sendErr(errorRes)
     return
   }
   try {
-    auth.verifyToken(headers.token)
-    next()
+    // const userInfo =  auth.verifyToken(headers.token)
+    redisClient.exists(token, function(err, ret){
+      // console.log('err', err)
+      // console.log('ret', ret)
+      if( ret === 0){
+        const errorMsg = 'TOKEN_HAS_EXPIRED'
+        const errorRes = resHandler.getErrorRes(errorMsg)
+        return res.sendErr(errorRes) 
+      }
+			//该token有效，重置token过期时间
+			redisClient.expire(token, settings.expiresConfig.expiresIn);
+			next();
+		});
   } catch (error) {
     const errorRes = resHandler.getErrorMsg(error)
     res.sendErr(errorRes)

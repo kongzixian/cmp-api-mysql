@@ -31,6 +31,14 @@ module.exports = {
   upload: {
     savePath: 'app/public/upload',
     showPath: '/upload/'
-  }
+  },
   // redis数据库配置
+  redisConfig: {
+    HOST: "127.0.0.1",
+    PORT: 6379,
+    PASSWORD: '123456'
+  },
+  expiresConfig: {
+    expiresIn: 3600 * 24
+  }
 }

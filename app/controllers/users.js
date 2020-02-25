@@ -2,7 +2,7 @@
 * @Author: kongzx
 * @Date:   2020-02-17 20:52:51
 * @Last Modified by:   kongzx
-* @Last Modified time: 2020-02-20 16:01:49
+* @Last Modified time: 2020-02-25 23:06:20
 */
 
 const md5 = require('blueimp-md5')
@@ -22,13 +22,9 @@ exports.login = async (req, res, next) =>{
   // 接收表单数据
   // 数据数据库处理登陆请求
   // 发送响应
-  
   try{
     const body = req.body
     const password = md5( md5( body.password ) ) 
-    // const sqlStr = `
-    //   SELECT * FROM users WHERE email='${  body.email }' and password='${  body.password }'
-    // `
     const sqlStr = `
       SELECT * FROM users WHERE email='${  body.email }'
     `
@@ -45,20 +41,26 @@ exports.login = async (req, res, next) =>{
       res.sendErr(errorRes)
     }
     const result = format.user(user)
-    console.log(result)
-    result.token = auth.createToken( result.id ) 
-    req.headers.token = result.token
-    req.kong = result
+    result.token = await auth.createToken( result.id ) 
     res.sendOk(result, 201)
     
     // 发送响应
     // res.status(201).json(user)
-
   }catch (err){
     next(err)
   }
-  
 }
+
+exports.logout = async (req, res, next) =>{
+  try{
+    const body = req.body
+    const userInfo = await auth.clearToken(req.headers.token)
+    res.sendOk({}, 201)
+  }catch( err ){
+    next(err)
+  }
+}
+
 
 /**
  * 创建用户

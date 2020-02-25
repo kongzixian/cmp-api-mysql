@@ -2,7 +2,7 @@
 * @Author: kongzx
 * @Date:   2020-02-17 20:52:51 
 * @Last Modified by:   kongzx
-* @Last Modified time: 2020-02-20 15:27:06
+* @Last Modified time: 2020-02-25 14:36:16
 */
 
 const express = require('express')
@@ -14,6 +14,8 @@ const bodyParser = require('body-parser')
 const log4js = require('log4js') 
 const cors = require('cors')
 const {logConfig, settings} = require('./config')
+
+const redis = require('redis')
 
 // 日志配置
 log4js.configure(logConfig)
@@ -37,6 +39,13 @@ app.use(bodyParser.json())
 //   saveUninitialized: false
 // }))
 
+// var client = redis.createClient(settings.redisConfig.port, settings.redisConfig.host)
+// client.auth( settings.redisConfig.PASSWORD );
+// const client = redis.createClient(settings.redisConfig)
+// client.on("error", function(err) {
+//   console.log( err );
+// });
+ 
 // 跨域配置
 app.use(cors())
 
