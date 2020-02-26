@@ -2,7 +2,7 @@
 * @Author: kongzx
 * @Date:   2020-02-17 20:52:51
 * @Last Modified by:   kongzx
-* @Last Modified time: 2020-02-25 22:38:18
+* @Last Modified time: 2020-02-26 17:21:51
 */
 const moment = require('moment')
 const db = require('../models/db')
@@ -32,7 +32,11 @@ exports.list = async (req, res, next) =>{
       `
     }
     const topics = await db.query(sqlStr)
-    res.sendOk(topics)
+    res.sendOk({
+      data: topics,
+      statusCode: 201,
+      msg: '话题查询成功'
+    })
   }catch( err ){
     next(err)
   }
@@ -61,7 +65,11 @@ exports.create = async (req, res, next) =>{
     `
     const ret = await db.query(sqlStr)
     const [ topics ] = await db.query(`SELECT * FROM topics WHERE id='${ ret.insertId }'`)
-    res.sendOk(topics, 201)
+    res.sendOk({
+      data: topics,
+      statusCode: 201,
+      msg: '话题创建成功'
+    })
   }catch( err ){
     next(err)
   }

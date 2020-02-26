@@ -1,9 +1,34 @@
 'use strict'
 module.exports = (req, res, next) => {
-  res.sendOk = (data, statusCode = 200) => {
+  res.sendOk = ({
+    data,
+    statusCode = 200,
+    msg = '交易成功',
+    count
+  }) => {
+    const res_body = {
+      // 待写
+    }
+    const res_head = {
+      // 信息
+      msg: msg,
+      // 会计日
+      tr_acdt: '20181201',
+      // 状态码 代表成功
+      ret_code: '0000',
+      // 交易日期
+      tr_time: '20181201',
+      // 交易码
+      tr_code: '',
+      // 用户
+      user: '',
+    }
     const rst = {
-      status: statusCode,
-      errorCode: 0,
+      count,
+      body: res_body,
+      head: res_head,
+      // status: statusCode,
+      // errorCode: 0,
       data: data
     }
     logger.info(`traceId:${req.headers.traceId}`)

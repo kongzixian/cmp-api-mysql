@@ -2,7 +2,7 @@
 * @Author: kongzx
 * @Date:   2020-02-19 14:23:50
 * @Last Modified by:   kongzx
-* @Last Modified time: 2020-02-25 22:38:42
+* @Last Modified time: 2020-02-26 22:16:55
 */
  
 'use strict'
@@ -19,11 +19,10 @@ module.exports = (req, res, next) => {
     return
   }
   try {
-    // const userInfo =  auth.verifyToken(headers.token)
+    // 先使用jwt做简单校验
+    auth.verifyToken(headers.token)
     redisClient.exists(token, function(err, ret){
-      // console.log('err', err)
-      // console.log('ret', ret)
-      if( ret === 0){
+      if( ret === 0 ){
         const errorMsg = 'TOKEN_HAS_EXPIRED'
         const errorRes = resHandler.getErrorRes(errorMsg)
         return res.sendErr(errorRes) 
@@ -33,8 +32,14 @@ module.exports = (req, res, next) => {
 			next();
 		});
   } catch (error) {
-    const errorRes = resHandler.getErrorMsg(error)
+    const errorObj = {
+      error_msg: error.message,
+      ret_code: 10000,
+    }
+    const errorRes = resHandler.getCommomErrorRes(errorObj)
     res.sendErr(errorRes)
+    // const errorRes = resHandler.getErrorMsg(error)
+    // res.sendErr(errorRes)
   }
 }
 

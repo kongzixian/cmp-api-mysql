@@ -8,5 +8,6 @@ myutil.format = require('./format')
 myutil.auth = require('./authentication')
 myutil.validator = require('validator')
 myutil.upload = require('./upload')
+myutil.sqlHandler = require('./sql-handler')
 
 module.exports = myutil

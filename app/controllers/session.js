@@ -2,7 +2,7 @@
 * @Author: kongzx
 * @Date:   2020-02-17 20:52:51
 * @Last Modified by:   kongzx
-* @Last Modified time: 2020-02-25 17:21:25
+* @Last Modified time: 2020-02-26 17:18:43
 */
 
 const db = require('../models/db')
@@ -55,7 +55,11 @@ exports.create = async (req, res, next) =>{
     }
     const result = format.user(user)
     result.token = auth.createToken( result.id ) 
-    res.sendOk(result, 201)
+    res.sendOk({
+      data: result,
+      statusCode: 201,
+      msg: '登陆成功'
+    })
     
     // 发送响应
     // res.status(201).json(user)
