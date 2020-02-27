@@ -2,21 +2,15 @@
 * @Author: kongzx
 * @Date:   2020-02-17 20:52:51
 * @Last Modified by:   kongzx
-* @Last Modified time: 2020-02-27 17:27:42
+* @Last Modified time: 2020-02-27 23:07:21
 */
 
-const md5 = require('blueimp-md5')
-const moment = require('moment')
-const db = require('../models/db')
-
 const Services = require('../services')
-
 const {auth, format, resHandler, paramsHandler} = require('../myutil')
 const {pageConfig, settings} = require('../../config')
 
 /**
- * 获取用户列表
- * @type {[type]}
+ * 查询用户列表
  */
 exports.list = async (req, res, next) =>{ 
   try{
@@ -47,8 +41,24 @@ exports.list = async (req, res, next) =>{
 }
 
 /**
+ * 查询指定用户
+ */
+exports.detail = async (req, res, next) =>{
+  try {
+    const result = await Services.users.detail(req.params.id)
+    res.sendOk({
+      data: result,
+      statusCode: 201,
+      msg: '查询成功'
+    })
+  } catch (error) {
+    const errorRes = resHandler.getCommomErrorRes(error)
+    res.sendErr(errorRes)
+  }
+}
+
+/**
  * 创建会话 用户登陆
- * @type {[type]}
  */
 exports.login = async (req, res, next) =>{
   // 接收表单数据
@@ -63,7 +73,6 @@ exports.login = async (req, res, next) =>{
       msg: '登陆成功'
     })
   } catch (error) {
-    console.log('error', error)
     const errorRes = resHandler.getCommomErrorRes(error)
     res.sendErr(errorRes)
   }
@@ -71,7 +80,6 @@ exports.login = async (req, res, next) =>{
 
 /**
  * 注销
- * @type {[type]}
  */
 exports.logout = async (req, res, next) =>{
   try{
@@ -90,44 +98,7 @@ exports.logout = async (req, res, next) =>{
 
 /**
  * 创建用户
- * @type {[type]}
  */
-// exports.create = async (req, res, next) =>{
-//   const body = req.body
-//   const sqlStr = `
-//         INSERT INTO users (username, password, email, nickname, avatar, gender, creat_time, modify_time) VALUES(
-//           '${ body.email }', 
-//           '${ md5(md5(body.password)) }', 
-//           '${ body.email }',  
-//           '${ body.nickname }',
-//           'default-avatar.png',
-//           0,
-//           '${ moment().format('YYYY-MM-DD hh:mm:ss') }',
-//           '${ moment().format('YYYY-MM-DD hh:mm:ss') }'
-//           )
-//         `
-//     // const ret = await db.query('SELECT 1 + 1 as solution')
-//     // 我们把容易出错的代码放到try-catch 代码块中
-//     // try中的代码一旦出错，会立即进入catch 代码块
-//     try{
-//       const ret = await db.query(sqlStr)
-//       if( !ret ){
-//         return res.status(400).json({
-//           error: 'Email already exists'
-//         })
-//       }
-//       const [users] = await db.query(`SELECT * FROM users WHERE id='${ ret.insertId }'`)
-//       res.sendOk({
-//         data: users,
-//         statusCode: 201,
-//         msg: '用户创建成功'
-//       })
-//     }catch( err){
-//       // 中间件统一处理
-//       next(err)
-//     }
-// }
-
 exports.create = async (req, res, next) =>{
   try {
     const body = req.body
@@ -153,15 +124,28 @@ exports.create = async (req, res, next) =>{
   }
 }
 
-exports.update = (req, res, next) =>{
-
+/**
+ * 更新用户信息
+ */
+exports.update = async (req, res, next) =>{
+  try {
+    const params = req.body
+    params.id = req.params.id
+    const result = await Services.users.update(req.body)
+    res.sendOk({
+      data: result,
+      statusCode: 201,
+      msg: '用户更新成功'
+    })
+  } catch (error) {
+    const errorRes = resHandler.getCommomErrorRes(error)
+    res.sendErr(errorRes)
+  }
 }
 
 /**
  * 删除用户
- * @type {[type]}
  */
-// kong 已完成
 exports.destroy = async (req, res, next) =>{
   try {
     const params = req.params

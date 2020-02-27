@@ -20,7 +20,7 @@ module.exports = {
     return result
   },
   async clearToken (token) {
-    const redistoken = await redisClient.del(token)
-    console.log(redistoken)
+    // const redistoken = await redisClient.del(token)
+    await redisClient.del(token)
   },
 }

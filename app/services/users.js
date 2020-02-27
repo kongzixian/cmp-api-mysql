@@ -10,6 +10,9 @@ class UserService extends BaseService {
     super(table)
     this.table = 'users'
   }
+  /**
+   * 创建用户
+   */
   async addUser (data) {
     try {
       const findRes = await super.findOne({email: data.email})
@@ -38,25 +41,27 @@ class UserService extends BaseService {
       throw error
     }
   }
-  async getUserByName (name) {
-    try {
-      const user = await db.User.findOne({name: name}, null, {lean: true})
-      return user
-    } catch (error) {
-      const errorMsg = 'SERVER_ERROR'
-      throw errorMsg
-    }
-  }
-  async getUserById (id) {
-    try {
-      const user = await db.User.findById(id)
-      return user
-    } catch (error) {
-      const errorMsg = 'SERVER_ERROR'
-      throw errorMsg
-    }
-  }
-  // kong 已完成
+  // async getUserByName (name) {
+  //   try {
+  //     const user = await db.User.findOne({name: name}, null, {lean: true})
+  //     return user
+  //   } catch (error) {
+  //     const errorMsg = 'SERVER_ERROR'
+  //     throw errorMsg
+  //   }
+  // }
+  // async getUserById (id) {
+  //   try {
+  //     const user = await db.User.findById(id)
+  //     return user
+  //   } catch (error) {
+  //     const errorMsg = 'SERVER_ERROR'
+  //     throw errorMsg
+  //   }
+  // }
+  /**
+   * 删除用户
+   */
   async destroy (id) {
     try {
       const findRes = await super.findById(id)
@@ -77,10 +82,24 @@ class UserService extends BaseService {
       throw error
     }
   }
+  /**
+   * 更新用户信息
+   */
   async update (params) {
     try {
-      await db.User.findById(params._id)
-      await db.User.update({_id: params._id}, {$set: params})
+      await super.findById(params.id)
+      // 获取刷新语句sql
+      const sqlStr = sqlHandler.getUpdateSQL({
+        table: this.table,
+        addCondition: true,
+        set: params,
+        condition: {
+          id: params.id
+        },
+      })
+
+      const www = await db.query(sqlStr)
+      // await db.User.update({_id: params._id}, {$set: params})
       const result = resHandler.getSuccessMsg('USER_UPDATE_SUCCESS')
       return result
     } catch (error) {
@@ -88,7 +107,6 @@ class UserService extends BaseService {
       throw errorMsg
     }
   }
-  // kong 已完成
   /**
    * 获取用户列表
    */
@@ -102,15 +120,15 @@ class UserService extends BaseService {
   }
   async detail (params) {
     try {
-      const findRes = await db.User.findById(params)
-      const result = format.user(findRes.toObject())
+      const findRes = await super.findById(params)
+      const result = format.user(findRes)
       return result
     } catch (error) {
       const errorMsg = 'USER_NOT_EXITS'
       throw errorMsg
     }
   }
-  // kong 已完成
+
   /**
    * 登陆
    */
@@ -119,30 +137,20 @@ class UserService extends BaseService {
       const findRes = await super.getUserByName( params.email )
 
       if ( !findRes ) {
-        console.log('zixian', findRes)
         const errorMsg = 'USER_NOT_EXITS'
         throw errorMsg
       }
       const inputPasswd = crypto.encrypted(params.password, settings.saltKey)
-      console.log( 'inputPasswd', inputPasswd )
       const equal = await crypto.checkPasswd(inputPasswd, findRes.password)
       if (!equal) {
-        console.log('kong2')
         const errorMsg = 'USER_PASSWORD_WRONG'
         throw errorMsg
       }
-      
-      // if( findRes.password != password ){
-      //   const errorMsg = 'USER_PASSWORD_WRONG'
-      //   throw errorMsg
-      // }
 
       const result = format.user(findRes)
       return result
     } catch (error) {
       throw error
-      // const errorMsg = 'USER_LOGIN_FAILED'
-      // throw errorMsg
     }
   }
   async test (params) {
