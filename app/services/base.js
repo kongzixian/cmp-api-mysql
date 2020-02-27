@@ -6,28 +6,43 @@ class BaseService {
     // this.model = model
     this.table = table
     this.adventures = null // 相当于select,选择返回的属性
-    this.commonErrorMsg = 'USERLIST_FIND_FAILED'
+    this.commonErrorMsg = `${ table }LIST_FIND_FAILED`
   }
   // kong 已完成
   async findOne (params) {
     try {
-      let condition = ''
-      for( const key in params ){
-        condition += `${ key }='${ params[key] }',`
-      }
-      condition = condition.slice(0, -1)
-      const sqlStr = `
-        SELECT  * FROM ${ this.table } WHERE ${condition} 
-      `
+      // let condition = ''
+      // for( const key in params ){
+      //   condition += `${ key }='${ params[key] }',`
+      // }
+      // condition = condition.slice(0, -1)
+      // const sqlStr = `
+      //   SELECT  * FROM ${ this.table } WHERE ${condition} 
+      // `
+      // 获取查询语句sql
+      const sqlStr = sqlHandler.getSelectSQL({
+        table: this.table,
+        addCondition: true,
+        condition: params,
+      })
       const [result] = await db.query(sqlStr)
       return result
     } catch (error) {
       throw this.commonErrorMsg
     }
   }
+  // kong 已完成
   async findById (id) {
     try {
-      const result = await mdb[this.model].findById(id, {lean: true})
+      // 获取查询语句sql
+      const sqlStr = sqlHandler.getSelectSQL({
+        table: this.table,
+        addCondition: true,
+        condition: {
+          id: id
+        },
+      })
+      const [result] = await db.query(sqlStr)
       return result
     } catch (error) {
       throw this.commonErrorMsg
@@ -52,22 +67,14 @@ class BaseService {
   // kong 已完成
   async list (params) {
     try {
-      let condition = ''
-      for( const key in params.condition ){
-        condition += `${ key }=${ params.condition[key] },`
-      }
-      condition = condition.slice(0, -1)
-
-      let sqlStr
-      if( !params.qry_all ){
-        sqlStr= `
-          SELECT * FROM ${ this.table } LIMIT ${ params.start },${ +params._limit } 
-        `
-      }else{
-        sqlStr = `
-          SELECT * FROM ${ this.table }  
-        `
-      }
+      // 获取查询语句sql
+      const sqlStr = sqlHandler.getSelectSQL({
+        table: this.table,
+        addCondition: params.addCondition,
+        condition: params.condition,
+        start: params.start,
+        _limit: params._limit
+      })
 
       const dataCount = await db.query( ` SELECT count(*) FROM ${ this.table } ` )
       const count = dataCount[0] &&  dataCount[0]['count(*)']
@@ -85,10 +92,6 @@ class BaseService {
     const sqlStr = `
       SELECT  * FROM ${ this.table } WHERE email='${ name }'
     `
-    // const query = mdb[this.model].findOne({name: name}, this.adventures, {blen: true})
-    // if (this.model === 'User') {
-    //   query.select('-password')
-    // }
     const [result] = await db.query( sqlStr )
     return result
   }

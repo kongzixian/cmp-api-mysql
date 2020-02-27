@@ -2,7 +2,7 @@
 * @Author: kongzx
 * @Date:   2020-02-17 20:52:51
 * @Last Modified by:   kongzx
-* @Last Modified time: 2020-02-26 17:21:51
+* @Last Modified time: 2020-02-26 23:22:44
 */
 const moment = require('moment')
 const db = require('../models/db')
@@ -79,7 +79,7 @@ exports.update = (req, res, next) =>{
   
 }
 
-exports.destory = (req, res, next) =>{
+exports.destroy = (req, res, next) =>{
   
 }
 

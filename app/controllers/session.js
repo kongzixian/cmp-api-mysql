@@ -2,7 +2,7 @@
 * @Author: kongzx
 * @Date:   2020-02-17 20:52:51
 * @Last Modified by:   kongzx
-* @Last Modified time: 2020-02-26 17:18:43
+* @Last Modified time: 2020-02-26 23:22:39
 */
 
 const db = require('../models/db')
@@ -73,7 +73,7 @@ exports.create = async (req, res, next) =>{
 /**
  * 注销登陆
  */
-exports.destory = (req, res, next) =>{
+exports.destroy = (req, res, next) =>{
   delete req.session.user
   // 发送响应
   res.status(201).json({})

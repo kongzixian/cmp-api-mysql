@@ -26,17 +26,17 @@ module.exports = {
     return result
   },
   // 通用返回错误体
-  getCommomErrorRes ( errorObj ) {
+  getCommomErrorRes ( error_msg, ret_code = 10000 ) {
     const body = {
       // 待写
     }
     const head = {
       // 错误信息
-      error_msg: errorObj.error_msg,
+      error_msg: error_msg,
       // 会计日
       tr_acdt: '20181201',
       // 状态码
-      ret_code: errorObj.ret_code,
+      ret_code: ret_code,
       // 交易日期
       tr_time: '20181201',
       // 交易码

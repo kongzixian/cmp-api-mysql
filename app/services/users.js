@@ -1,9 +1,10 @@
 'use strict'
 const BaseService = require('./base')
 const db = require('../models/db')
-const {crypto, format, resHandler} = require('../myutil')
+const {crypto, format, resHandler, sqlHandler} = require('../myutil')
 const md5 = require('blueimp-md5')
 const {settings} = require('../../config')
+const moment = require('moment')
 class UserService extends BaseService {
   constructor (table) {
     super(table)
@@ -11,14 +12,28 @@ class UserService extends BaseService {
   }
   async addUser (data) {
     try {
-      const findRes = await db.User.findOne({name: data.name})
+      const findRes = await super.findOne({email: data.email})
       if (findRes) {
         const errorMsg = 'USER_HAS_EXITS'
         throw errorMsg
       }
       data.password = crypto.encrypted(data.password, settings.saltKey)
-      const result = await db.User.create(data)
-      return format.user(result.toObject())
+      const sqlStr = `
+            INSERT INTO users (username, password, email, nickname, avatar, gender, creat_time, modify_time) VALUES(
+              '${ data.email }', 
+              '${ data.password }', 
+              '${ data.email }',  
+              '${ data.nickname }',
+              'default-avatar.png',
+              0,
+              '${ moment().format('YYYY-MM-DD hh:mm:ss') }',
+              '${ moment().format('YYYY-MM-DD hh:mm:ss') }'
+              )
+            `
+      const ret = await db.query(sqlStr)
+      const [user] = await db.query(`SELECT * FROM users WHERE id='${ ret.insertId }'`)
+      return format.user(user)
+
     } catch (error) {
       throw error
     }
@@ -41,16 +56,23 @@ class UserService extends BaseService {
       throw errorMsg
     }
   }
-  async destroy (params) {
+  // kong 已完成
+  async destroy (id) {
     try {
-      const findRes = await db.User.findById(params)
+      const findRes = await super.findById(id)
       if (!findRes) {
         const errorMsg = 'USER_NOT_EXITS'
         throw errorMsg
       }
-      await db.User.remove({_id: params})
-      const result = resHandler.getSuccessMsg('USER_DELETE_SUCCESS')
-      return result
+      // 获取删除语句sql
+      const sqlStr = sqlHandler.getDeleteSQL({
+        table: this.table,
+        addCondition: true,
+        condition: {
+          id: id
+        },
+      })
+      const result = await db.query(sqlStr)
     } catch (error) {
       throw error
     }
@@ -66,7 +88,10 @@ class UserService extends BaseService {
       throw errorMsg
     }
   }
-  // kong
+  // kong 已完成
+  /**
+   * 获取用户列表
+   */
   async getUserList (params) {
     try {
       const result = super.list(params)
@@ -86,26 +111,38 @@ class UserService extends BaseService {
     }
   }
   // kong 已完成
+  /**
+   * 登陆
+   */
   async login (params) {
     try {
       const findRes = await super.getUserByName( params.email )
 
-      if (!findRes) {
+      if ( !findRes ) {
+        console.log('zixian', findRes)
         const errorMsg = 'USER_NOT_EXITS'
         throw errorMsg
       }
-      const password = md5( md5( params.password ) ) 
-      
-      if( findRes.password != password ){
+      const inputPasswd = crypto.encrypted(params.password, settings.saltKey)
+      console.log( 'inputPasswd', inputPasswd )
+      const equal = await crypto.checkPasswd(inputPasswd, findRes.password)
+      if (!equal) {
+        console.log('kong2')
         const errorMsg = 'USER_PASSWORD_WRONG'
         throw errorMsg
       }
+      
+      // if( findRes.password != password ){
+      //   const errorMsg = 'USER_PASSWORD_WRONG'
+      //   throw errorMsg
+      // }
 
       const result = format.user(findRes)
       return result
     } catch (error) {
-      const errorMsg = 'USER_LOGIN_FAILED'
-      throw errorMsg
+      throw error
+      // const errorMsg = 'USER_LOGIN_FAILED'
+      // throw errorMsg
     }
   }
   async test (params) {
@@ -115,4 +152,4 @@ class UserService extends BaseService {
   }
 }
 
-module.exports = new UserService()
+module.exports = new UserService('users')
