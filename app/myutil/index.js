@@ -9,5 +9,6 @@ myutil.auth = require('./authentication')
 myutil.validator = require('validator')
 myutil.upload = require('./upload')
 myutil.sqlHandler = require('./sql-handler')
+myutil.dataHandler = require('./data-handler')
 
 module.exports = myutil
