@@ -3,6 +3,8 @@
 const {resHandler} = require('../myutil')
 
 module.exports = (req, res, next) => {
-  const errorRes = resHandler.getErrorRes('NOT_FIND_ROUTE')
-  res.sendErr(errorRes)
+  // const errorRes = resHandler.getErrorRes('NOT_FIND_ROUTE')
+  res.sendErr({
+    error_msg: '访问的路由不存在',
+  })
 }

@@ -22,6 +22,8 @@ module.exports = (req, res, next) => {
       tr_code: '',
       // 用户
       user: '',
+      // 流水号
+      serial_no: req.headers.traceId
     }
     const rst = {
       count,
@@ -41,14 +43,39 @@ module.exports = (req, res, next) => {
     logger.info(`sendOk:${JSON.stringify(data)}`)
     res.status(statusCode).send(rst)
   }
-  res.sendErr = (errorInfo) => {
+  res.sendErr = ({
+    error_msg,
+    ret_code = 10000,
+    statusCode = 200
+  }) => {
+    const body = {
+      // 待写
+    }
+    const head = {
+      // 错误信息
+      error_msg: error_msg,
+      // 会计日
+      tr_acdt: '20181201',
+      // 状态码
+      ret_code: ret_code,
+      // 交易日期
+      tr_time: '20181201',
+      // 交易码
+      tr_code: '',
+      // 用户
+      user: '',
+    }
+    const errorInfo = {
+      body,
+      head
+    }
     logger.info(`traceId:${req.headers.traceId}`)
     logger.error(`method: [${req.method}] req-url: ${req.url}`)
     logger.error(`req-query:${JSON.stringify(req.query)}`)
     logger.error(`req-params:${JSON.stringify(req.params)}`)
     logger.error(`req-body:${JSON.stringify(req.body)}`)
     logger.error(`sendErr:${JSON.stringify(errorInfo)}`)
-    res.send(errorInfo)
+    res.status(statusCode).send(errorInfo)
   }
   next()
 }

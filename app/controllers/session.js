@@ -2,7 +2,7 @@
 * @Author: kongzx
 * @Date:   2020-02-17 20:52:51
 * @Last Modified by:   kongzx
-* @Last Modified time: 2020-02-26 23:22:39
+* @Last Modified time: 2020-02-28 16:23:20
 */
 
 const db = require('../models/db')
@@ -44,14 +44,18 @@ exports.create = async (req, res, next) =>{
     const [user] = await db.query( sqlStr )
     if( !user ){
       const errorMsg = 'USER_NOT_EXITS'
-      const errorRes = resHandler.getErrorRes(errorMsg)
-      res.sendErr(errorRes)
+      // const errorRes = resHandler.getErrorRes(errorMsg)
+      res.sendErr({
+        error_msg: errorMsg
+      })
     }
 
     if( user && user.password != password ){
       const errorMsg = 'USER_PASSWORD_WRONG'
-      const errorRes = resHandler.getErrorRes(errorMsg)
-      res.sendErr(errorRes)
+      // const errorRes = resHandler.getErrorRes(errorMsg)
+      res.sendErr({
+        error_msg: errorMsg
+      })
     }
     const result = format.user(user)
     result.token = auth.createToken( result.id ) 

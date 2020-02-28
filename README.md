@@ -4,6 +4,9 @@ git commit -m "first commit"
 git remote add origin https://github.com/kongzixian/cmp-api-mysql.git
 git push -u origin master
 
+启动服务
+nodemon app
+
 <!-- 成功返回 -->
   res.sendOk({
     data: result,
@@ -12,8 +15,71 @@ git push -u origin master
   })
 
 <!-- 失败返回 -->
-  const errorRes = resHandler.getCommomErrorRes(error)
-  res.sendErr(errorRes)
+  res.sendErr({
+    error_msg: error
+  })
 
-sql-handler.js
-方法都需要修改
+  res.sendErr({
+    error_msg: error,
+    ret_code: 10000,
+    statusCode: 200
+  })
+
+/*************** 简单sql语句 ***********************/
+  sql-handler.js
+  <!-- 查询 -->
+  const sqlStr = sqlHandler.getSelectSQL({
+    model: this.model,
+    table: this.table,
+    addCondition: true,
+    condition: params,
+  })
+  <!-- 分页 -->
+  const sqlStr = sqlHandler.getSelectSQL({
+    model: this.model,
+    table: this.table,
+    addCondition: params.addCondition,
+    condition: params.condition,
+    start: params.start,
+    _limit: params._limit
+  })
+
+  <!-- 删除 -->
+  const sqlStr = sqlHandler.getDeleteSQL({
+    model: this.model,
+    table: this.table,
+    addCondition: true,
+    condition: {
+      id: id
+    },
+  })
+
+  <!-- 插入 -->
+  const sqlStr = sqlHandler.getInsertSQL({
+    model: this.model,
+    table: this.table,
+    addCondition: true,
+    condition: {
+      username: data.email,
+      password: data.password,
+      email: data.email,
+      nickname: data.nickname,
+      avatar: 'default-avatar.png',
+      gender: 0,
+      create_time: moment().format('YYYY-MM-DD hh:mm:ss'),
+      modify_time: moment().format('YYYY-MM-DD hh:mm:ss')
+    },
+  })
+
+  <!-- 更新 -->
+  const sqlStr = sqlHandler.getUpdateSQL({
+    model: this.model,
+    table: this.table,
+    addCondition: true,
+    set: params,
+    condition: {
+      id: params.id
+    },
+  })
+/*************** 简单sql语句 ***********************/
+

@@ -2,7 +2,7 @@
 * @Author: kongzx
 * @Date:   2020-02-17 20:52:51
 * @Last Modified by:   kongzx
-* @Last Modified time: 2020-02-27 23:07:21
+* @Last Modified time: 2020-02-28 16:24:25
 */
 
 const Services = require('../services')
@@ -35,8 +35,9 @@ exports.list = async (req, res, next) =>{
     })
 
   }catch( error ){
-    const errorRes = resHandler.getCommomErrorRes(error)
-    res.sendErr(errorRes)
+    res.sendErr({
+      error_msg: error
+    })
   }
 }
 
@@ -52,8 +53,9 @@ exports.detail = async (req, res, next) =>{
       msg: '查询成功'
     })
   } catch (error) {
-    const errorRes = resHandler.getCommomErrorRes(error)
-    res.sendErr(errorRes)
+    res.sendErr({
+      error_msg: error
+    })
   }
 }
 
@@ -73,8 +75,9 @@ exports.login = async (req, res, next) =>{
       msg: '登陆成功'
     })
   } catch (error) {
-    const errorRes = resHandler.getCommomErrorRes(error)
-    res.sendErr(errorRes)
+    res.sendErr({
+      error_msg: error
+    })
   }
 }
 
@@ -91,8 +94,9 @@ exports.logout = async (req, res, next) =>{
       msg: '注销成功'
     })
   }catch( error ){
-    const errorRes = resHandler.getCommomErrorRes(error)
-    res.sendErr(errorRes)
+    res.sendErr({
+      error_msg: error
+    })
   }
 }
 
@@ -119,8 +123,9 @@ exports.create = async (req, res, next) =>{
       msg: '用户创建成功'
     })
   } catch (error) {
-    const errorRes = resHandler.getCommomErrorRes(error)
-    res.sendErr(errorRes)
+    res.sendErr({
+      error_msg: error
+    })
   }
 }
 
@@ -138,8 +143,9 @@ exports.update = async (req, res, next) =>{
       msg: '用户更新成功'
     })
   } catch (error) {
-    const errorRes = resHandler.getCommomErrorRes(error)
-    res.sendErr(errorRes)
+    res.sendErr({
+      error_msg: error
+    })
   }
 }
 
@@ -157,7 +163,8 @@ exports.destroy = async (req, res, next) =>{
       msg: '删除用户成功'
     })
   } catch (error) {
-    const errorRes = resHandler.getCommomErrorRes(error)
-    res.sendErr(errorRes)
+    res.sendErr({
+      error_msg: error
+    })
   }
 }
