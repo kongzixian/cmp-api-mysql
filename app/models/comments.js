@@ -2,7 +2,7 @@
 * @Author: kongzx
 * @Date:   2020-02-27 22:05:38
 * @Last Modified by:   kongzx
-* @Last Modified time: 2020-02-27 22:32:27
+* @Last Modified time: 2020-02-28 00:47:03
 */
 /**
  *
@@ -19,31 +19,31 @@
  */
 module.exports = {
   id: {
-    name: 'id'
+    name: 'id',
     type: 'INT'
   },
   content: {
-    name: '评论内容'
+    name: '评论内容',
     type: 'TEXT'
   },
   create_time: {
-    name: '创建时间'
+    name: '创建时间',
     type: 'DATETIME'
   },      
   modify_time: {
-    name: '修改时间'
+    name: '修改时间',
     type: 'DATE'
   },  
   artticle_id: {
-    name: '所属文章'
+    name: '所属文章',
     type: 'INT'
   }, 
   user_id: {
-    name: '所属用户'
+    name: '所属用户',
     type: 'INT'
   },
   reply_id: {
-    name: '所属回复人'
+    name: '所属回复人',
     type: 'INT'
   },
 }

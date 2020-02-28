@@ -6,9 +6,10 @@ const md5 = require('blueimp-md5')
 const {settings} = require('../../config')
 const moment = require('moment')
 class UserService extends BaseService {
-  constructor (table) {
-    super(table)
-    this.table = 'users'
+  constructor (table, model) {
+    super(table, model)
+    this.table = table
+    this.model = model
   }
   /**
    * 创建用户
@@ -21,18 +22,33 @@ class UserService extends BaseService {
         throw errorMsg
       }
       data.password = crypto.encrypted(data.password, settings.saltKey)
-      const sqlStr = `
-            INSERT INTO users (username, password, email, nickname, avatar, gender, creat_time, modify_time) VALUES(
-              '${ data.email }', 
-              '${ data.password }', 
-              '${ data.email }',  
-              '${ data.nickname }',
-              'default-avatar.png',
-              0,
-              '${ moment().format('YYYY-MM-DD hh:mm:ss') }',
-              '${ moment().format('YYYY-MM-DD hh:mm:ss') }'
-              )
-            `
+      // const sqlStr = `
+      //       INSERT INTO users (username, password, email, nickname, avatar, gender, create_time, modify_time) VALUES(
+      //         '${ data.email }', 
+      //         '${ data.password }', 
+      //         '${ data.email }',  
+      //         '${ data.nickname }',
+      //         'default-avatar.png',
+      //         0,
+      //         '${ moment().format('YYYY-MM-DD hh:mm:ss') }',
+      //         '${ moment().format('YYYY-MM-DD hh:mm:ss') }'
+      //         )
+      //       `
+      const sqlStr = sqlHandler.getInsertSQL({
+        model: this.model,
+        table: this.table,
+        addCondition: true,
+        condition: {
+          username: data.email,
+          password: data.password,
+          email: data.email,
+          nickname: data.nickname,
+          avatar: 'default-avatar.png',
+          gender: 0,
+          create_time: moment().format('YYYY-MM-DD hh:mm:ss'),
+          modify_time: moment().format('YYYY-MM-DD hh:mm:ss')
+        },
+      })
       const ret = await db.query(sqlStr)
       const [user] = await db.query(`SELECT * FROM users WHERE id='${ ret.insertId }'`)
       return format.user(user)
@@ -71,6 +87,7 @@ class UserService extends BaseService {
       }
       // 获取删除语句sql
       const sqlStr = sqlHandler.getDeleteSQL({
+        model: this.model,
         table: this.table,
         addCondition: true,
         condition: {
@@ -90,6 +107,7 @@ class UserService extends BaseService {
       await super.findById(params.id)
       // 获取刷新语句sql
       const sqlStr = sqlHandler.getUpdateSQL({
+        model: this.model,
         table: this.table,
         addCondition: true,
         set: params,
@@ -97,10 +115,9 @@ class UserService extends BaseService {
           id: params.id
         },
       })
-
-      const www = await db.query(sqlStr)
-      // await db.User.update({_id: params._id}, {$set: params})
-      const result = resHandler.getSuccessMsg('USER_UPDATE_SUCCESS')
+      await db.query(sqlStr)
+      const [user] = await db.query(`SELECT * FROM users WHERE id='${ params.id }'`)
+      return format.user(user)
       return result
     } catch (error) {
       const errorMsg = 'USER_UPDATE_FAILED'
@@ -160,4 +177,4 @@ class UserService extends BaseService {
   }
 }
 
-module.exports = new UserService('users')
+module.exports = new UserService('users', 'User')

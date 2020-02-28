@@ -2,7 +2,7 @@
 * @Author: kongzx
 * @Date:   2020-02-27 22:05:38
 * @Last Modified by:   kongzx
-* @Last Modified time: 2020-02-27 22:35:32
+* @Last Modified time: 2020-02-28 00:46:20
 */
 /**
  * 用户表
@@ -20,39 +20,39 @@
  */
 module.exports = {
   id: {
-    name: 'id'
+    name: 'id',
     type: 'INT'
   },
   username: {
-    name: '用户名'
+    name: '用户名',
     type: 'VARCHAR'
   },
   password: {
-    name: '密码'
+    name: '密码',
     type: 'VARCHAR'
   },
   email: {
-    name: '邮箱'
+    name: '邮箱',
     type: 'VARCHAR'
   },
   nickname: {
-    name: '昵称'
+    name: '昵称',
     type: 'VARCHAR'
   },  
   avatar: {
-    name: '头像'
+    name: '头像',
     type: 'VARCHAR'
   }, 
   gender: {
-    name: '性别'
+    name: '性别',
     type: 'bit'
   },
   create_time: {
-    name: '创建时间'
+    name: '创建时间',
     type: 'DATETIME'
   },      
   modify_time: {
-    name: '修改时间'
+    name: '修改时间',
     type: 'DATETIME'
   },  
 }

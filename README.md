@@ -12,13 +12,8 @@ git push -u origin master
   })
 
 <!-- 失败返回 -->
-  const errorObj = {
-    error_msg: error.message,
-    ret_code: 10000,
-  }
-  const errorRes = resHandler.getCommomErrorRes(errorObj)
+  const errorRes = resHandler.getCommomErrorRes(error)
   res.sendErr(errorRes)
 
-  用户登陆
-  用户查询
-  已修复
+sql-handler.js
+方法都需要修改

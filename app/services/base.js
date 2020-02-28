@@ -2,8 +2,8 @@
 const db = require('../models/db')
 const {sqlHandler} = require('../myutil')
 class BaseService {
-  constructor (table) {
-    // this.model = model
+  constructor (table, model) {
+    this.model = model
     this.table = table
     this.adventures = null // 相当于select,选择返回的属性
     this.commonErrorMsg = `${ table }LIST_FIND_FAILED`
@@ -11,16 +11,9 @@ class BaseService {
   // kong 已完成
   async findOne (params) {
     try {
-      // let condition = ''
-      // for( const key in params ){
-      //   condition += `${ key }='${ params[key] }',`
-      // }
-      // condition = condition.slice(0, -1)
-      // const sqlStr = `
-      //   SELECT  * FROM ${ this.table } WHERE ${condition} 
-      // `
       // 获取查询语句sql
       const sqlStr = sqlHandler.getSelectSQL({
+        model: this.model,
         table: this.table,
         addCondition: true,
         condition: params,
@@ -36,10 +29,11 @@ class BaseService {
     try {
       // 获取查询语句sql
       const sqlStr = sqlHandler.getSelectSQL({
+        model: this.model,
         table: this.table,
         addCondition: true,
         condition: {
-          id: id
+          id: id,
         },
       })
       const [result] = await db.query(sqlStr)
@@ -69,6 +63,7 @@ class BaseService {
     try {
       // 获取查询语句sql
       const sqlStr = sqlHandler.getSelectSQL({
+        model: this.model,
         table: this.table,
         addCondition: params.addCondition,
         condition: params.condition,
