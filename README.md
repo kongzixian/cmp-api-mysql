@@ -83,3 +83,15 @@ nodemon app
   })
 /*************** 简单sql语句 ***********************/
 
+const sqlStr = `
+  INSERT INTO users (username, password, email, nickname, avatar, gender, create_time, modify_time) VALUES(
+     '${ data.email }', 
+     '${ data.password }', 
+     '${ data.email }',  
+     '${ data.nickname }',
+     'default-avatar.png',
+     0,
+     '${ moment().format('YYYY-MM-DD hh:mm:ss') }',
+     '${ moment().format('YYYY-MM-DD hh:mm:ss') }'
+     )
+`

@@ -2,84 +2,150 @@
 * @Author: kongzx
 * @Date:   2020-02-17 20:52:51
 * @Last Modified by:   kongzx
-* @Last Modified time: 2020-02-26 23:22:44
+* @Last Modified time: 2020-02-29 23:04:27
 */
+
 const moment = require('moment')
-const db = require('../models/db')
-const {auth, resHandler, paramsHandler, validator, upload} = require('../myutil')
+const Services = require('../services')
+const {auth, resHandler, paramsHandler} = require('../myutil')
 const {pageConfig, settings} = require('../../config')
 
-/**
- * 分页话题列表
- * @type {[type]}
- */
-exports.list = async (req, res, next) =>{ 
-  try{
-    const offset = paramsHandler.offsetFormat(req.query, pageConfig.article)
-    const queryObj = {
-      _page: offset._page,
-      _limit: offset._limit,
-      start: offset.start
-    }
-    let sqlStr
-    if( !req.query.qry_all ){
-      sqlStr= `
-        SELECT * FROM topics LIMIT ${ queryObj.start },${ +queryObj._limit } 
-      `
-    }else{
-      sqlStr = `
-        SELECT * FROM topics 
-      `
-    }
-    const topics = await db.query(sqlStr)
-    res.sendOk({
-      data: topics,
-      statusCode: 201,
-      msg: '话题查询成功'
-    })
-  }catch( err ){
-    next(err)
-  }
-}
+class TopicsController {
 
-/**
- * 创建话题
- * @type {[type]}
- */
-exports.create = async (req, res, next) =>{
-  try{
-    const body = req.body
-    const userInfo = auth.verifyToken(req.headers.token)
-    body.user_id = userInfo.userId
-    body.create_time = moment().format('YYYY-MM-DD hh:mm:ss')
-    body.modify_time = moment().format('YYYY-MM-DD hh:mm:ss')
-    const sqlStr = `
-      INSERT INTO topics(title, content, user_id, create_time, modify_time)
-      VALUES (
-        '${ body.title }',
-        '${ body.content }',
-        '${ body.user_id }',
-        '${ body.create_time }',
-        '${ body.modify_time }'
-      )
-    `
-    const ret = await db.query(sqlStr)
-    const [ topics ] = await db.query(`SELECT * FROM topics WHERE id='${ ret.insertId }'`)
-    res.sendOk({
-      data: topics,
-      statusCode: 201,
-      msg: '话题创建成功'
-    })
-  }catch( err ){
-    next(err)
+  /**
+   * 新增话题
+   */
+  async create (req, res) {
+    try {
+      const body = req.body
+      const userInfo = auth.verifyToken(req.headers.token)
+      body.user_id = userInfo.userId
+      const result = await Services.topics.create( body )
+      res.sendOk({
+        data: result,
+        statusCode: 201,
+        msg: '话题创建成功'
+      })
+    } catch (error) {
+      res.sendErr({
+        error_msg: error
+      })
+    }
   }
-}
 
-exports.update = (req, res, next) =>{
+  /**
+   * 删除话题
+   */
+  async destroy (req, res) {
+    try {
+      const params = req.params
+      await Services.topics.destroy(params.id)
+      res.sendOk({
+        data: {},
+        statusCode: 201,
+        msg: '删除话题成功'
+      })
+    } catch (error) {
+      res.sendErr({
+        error_msg: error
+      })
+    }
+  }
+
+  /**
+   * 话题更新
+   */ 
+  async update (req, res ) {
+    try {
+      const body = req.body
+      body.id = req.params.id
+      const data = {
+        id: body.id,
+        title: body.title,
+        content: data.content, 
+      }
+      const result = await Services.topics.update(req.body)
+      res.sendOk({
+        data: result,
+        statusCode: 201,
+        msg: '用户话题成功'
+      })
+    } catch (error) {
+      res.sendErr({
+        error_msg: error
+      })
+    }
+  }
+
+  /**
+   * 查询话题列表
+   */
+  async list (req, res) { 
+    try{
+      const offset = paramsHandler.offsetFormat(req.query, pageConfig.article)
+      const queryObj = {
+        condition: req.query,
+        addCondition: false,
+        _limit: offset._limit,
+        start: offset.start
+      }
+
+      const userList = await Services.topics.getList(queryObj)
+
+      res.sendOk({
+        data: userList.list,
+        statusCode: 201,
+        msg: '话题查询成功',
+        count: userList.count
+      })
+
+    }catch( error ){
+      res.sendErr({
+        error_msg: error
+      })
+    }
+  }
+
+  /**
+   * 话题信息
+   */
+  async detail (req, res) {
+    try {
+      const result = await Services.topics.detail(req.params.id)
+      res.sendOk({
+        data: result,
+        statusCode: 201,
+        msg: '查询成功'
+      })
+    } catch (error) {
+      res.sendErr({
+        error_msg: error
+      })
+    }
+  }
+
+  
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
   
 }
-
-exports.destroy = (req, res, next) =>{
-  
-}
+module.exports = new TopicsController()
 

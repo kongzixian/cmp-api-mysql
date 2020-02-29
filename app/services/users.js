@@ -22,18 +22,6 @@ class UserService extends BaseService {
         throw errorMsg
       }
       data.password = crypto.encrypted(data.password, settings.saltKey)
-      // const sqlStr = `
-      //       INSERT INTO users (username, password, email, nickname, avatar, gender, create_time, modify_time) VALUES(
-      //         '${ data.email }', 
-      //         '${ data.password }', 
-      //         '${ data.email }',  
-      //         '${ data.nickname }',
-      //         'default-avatar.png',
-      //         0,
-      //         '${ moment().format('YYYY-MM-DD hh:mm:ss') }',
-      //         '${ moment().format('YYYY-MM-DD hh:mm:ss') }'
-      //         )
-      //       `
       const sqlStr = sqlHandler.getInsertSQL({
         model: this.model,
         table: this.table,
@@ -105,12 +93,25 @@ class UserService extends BaseService {
   async update (params) {
     try {
       await super.findById(params.id)
-      // 获取刷新语句sql
+      const setArr = ['password', 'nickname', 'avatar', 'gender']
+      let setParams = {}
+      setArr.forEach((item) => {
+        if( params[ item ] ){
+          if( item == 'password' ){
+            setParams[ item ] = crypto.encrypted( params[ item ], settings.saltKey)
+          }else{
+            setParams[ item ] = params[ item ]
+          }
+        }
+        
+      })
+      setParams.modify_time = moment().format('YYYY-MM-DD hh:mm:ss')
+      // 获取刷新语句sqlsetParams = {}
       const sqlStr = sqlHandler.getUpdateSQL({
         model: this.model,
         table: this.table,
         addCondition: true,
-        set: params,
+        set: setParams,
         condition: {
           id: params.id
         },

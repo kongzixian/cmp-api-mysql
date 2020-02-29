@@ -2,7 +2,7 @@
 * @Author: kongzx
 * @Date:   2020-02-18 00:04:46
 * @Last Modified by:   kongzx
-* @Last Modified time: 2020-02-26 23:23:00
+* @Last Modified time: 2020-02-29 23:03:08
 */
 
 const Controllers = require('../controllers')
@@ -13,9 +13,16 @@ module.exports = (router) => {
    * 话题资源
    */
   router
-    .get('/topics', Controllers.topics.list)
+    // 新增话题
     .post('/topics', Controllers.topics.create)
-    .patch('/topics/:id', Controllers.topics.update)
+    // 删除话题
     .delete('/topics/:id', Controllers.topics.destroy)
+    // 话题更新
+    .patch('/topics/:id', Controllers.topics.update)
+    // 查询话题列表
+    .get('/topics', Controllers.topics.list)
+    // 话题信息
+    .get('/users/:id', Controllers.users.detail)
+    
 
 }

@@ -2,10 +2,11 @@
 * @Author: kongzx
 * @Date:   2020-02-17 20:52:51
 * @Last Modified by:   kongzx
-* @Last Modified time: 2020-02-28 17:45:59
+* @Last Modified time: 2020-02-29 22:29:16
 */
 
 const Services = require('../services')
+const moment = require('moment')
 const {auth, format, resHandler, paramsHandler} = require('../myutil')
 const {pageConfig, settings} = require('../../config')
 
@@ -13,15 +14,6 @@ class UsersController {
   /**
    * 查询用户列表
    */
-   async create (req, res) {
-     try {
-       const result = await Services.users.addUser(req.body)
-       res.sendOk(result)
-     } catch (error) {
-       const errorRes = resHandler.getErrorRes(error)
-       res.sendErr(errorRes)
-     }
-   }
   async list (req, res) { 
     try{
       const offset = paramsHandler.offsetFormat(req.query, pageConfig.article)
@@ -116,17 +108,7 @@ class UsersController {
   async create (req, res) {
     try {
       const body = req.body
-      const data = {
-        username: body.username ,
-        password: body.password ,
-        email: body.email ,
-        nickname: body.nickname ,
-        avatar: body.avatar ,
-        gender: body.gender ,
-        creat_time: body.creat_time ,
-        modify_time: body. modify_time
-      }
-      const result = await Services.users.addUser( data )
+      const result = await Services.users.addUser( body )
       res.sendOk({
         data: result,
         statusCode: 201,
@@ -145,7 +127,7 @@ class UsersController {
   async update (req, res ) {
     try {
       const params = req.body
-      params.id = req.params.id
+      req.body.id = req.params.id
       const result = await Services.users.update(req.body)
       res.sendOk({
         data: result,
