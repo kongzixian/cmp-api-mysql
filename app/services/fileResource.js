@@ -54,7 +54,7 @@ class FileResourceService extends BaseService {
   /**
    * 下载文件
    */
-  async download ({
+  async download ({ 
     target,
     fileName,
     res
@@ -66,7 +66,17 @@ class FileResourceService extends BaseService {
         //告诉浏览器这是一个需要下载的文件
         "Content-Disposition":"attachment; filename=" + fileName
       });
-      fs.createReadStream(target).pipe(res);
+      const readStream = fs.createReadStream(target)
+      // 捕捉错误
+      readStream.on('error', function(error){
+        if( error ){
+          return res.sendErr({
+            error_msg: error.message
+          })
+        }
+      });
+
+      readStream.pipe(res);
     } catch (error) {
       throw error
     }
