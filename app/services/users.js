@@ -94,16 +94,9 @@ class UserService extends BaseService {
     try {
       await super.findById(params.id)
       const setArr = ['password', 'nickname', 'avatar', 'gender']
-      let setParams = {}
-      setArr.forEach((item) => {
-        if( params[ item ] ){
-          if( item == 'password' ){
-            setParams[ item ] = crypto.encrypted( params[ item ], settings.saltKey)
-          }else{
-            setParams[ item ] = params[ item ]
-          }
-        }
-        
+      let setParams = sqlHandler.getSqlSetParams({
+        params: params,
+        setArr: setArr
       })
       setParams.modify_time = moment().format('YYYY-MM-DD hh:mm:ss')
       // 获取刷新语句sqlsetParams = {}
@@ -117,9 +110,8 @@ class UserService extends BaseService {
         },
       })
       await db.query(sqlStr)
-      const [user] = await db.query(`SELECT * FROM users WHERE id='${ params.id }'`)
+      const [user] = await db.query(`SELECT * FROM ${ this.table } WHERE id='${ params.id }'`)
       return format.user(user)
-      return result
     } catch (error) {
       const errorMsg = 'USER_UPDATE_FAILED'
       throw errorMsg

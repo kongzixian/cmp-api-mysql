@@ -60,23 +60,24 @@ nodemon app
     table: this.table,
     addCondition: true,
     condition: {
-      username: data.email,
-      password: data.password,
-      email: data.email,
-      nickname: data.nickname,
-      avatar: 'default-avatar.png',
-      gender: 0,
+      title: data.title,
+      content: data.content,
+      user_id: data.user_id,
       create_time: moment().format('YYYY-MM-DD hh:mm:ss'),
       modify_time: moment().format('YYYY-MM-DD hh:mm:ss')
     },
   })
 
   <!-- 更新 -->
+  let setParams = sqlHandler.getSqlSetParams({
+    params: params,
+    setArr: setArr
+  })
   const sqlStr = sqlHandler.getUpdateSQL({
     model: this.model,
     table: this.table,
     addCondition: true,
-    set: params,
+    set: setParams,
     condition: {
       id: params.id
     },

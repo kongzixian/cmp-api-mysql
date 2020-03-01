@@ -1,5 +1,5 @@
 'use strict'
-const { dataHandler } = require('../myutil')
+const { validateHandler } = require('../myutil')
 
 module.exports = (req, res, next) => {
   res.sendOk = ({
@@ -55,7 +55,7 @@ module.exports = (req, res, next) => {
     }
     const head = {
       // 错误信息 因为捕捉到的错误 有可能是 error对象 也可能是字符串
-      error_msg: dataHandler.isObject( error_msg ) ? error_msg.message : error_msg,
+      error_msg: validateHandler.isObject( error_msg ) ? error_msg.message : error_msg,
       // 会计日
       tr_acdt: '20181201',
       // 状态码

@@ -2,7 +2,7 @@
 * @Author: kongzx
 * @Date:   2020-02-17 20:52:51
 * @Last Modified by:   kongzx
-* @Last Modified time: 2020-02-29 23:04:27
+* @Last Modified time: 2020-03-01 17:31:54
 */
 
 const moment = require('moment')
@@ -59,12 +59,10 @@ class TopicsController {
     try {
       const body = req.body
       body.id = req.params.id
-      const data = {
-        id: body.id,
-        title: body.title,
-        content: data.content, 
-      }
-      const result = await Services.topics.update(req.body)
+      // 更新话题
+      await Services.topics.update( body );
+      // 查询最新数据 
+      const result = await Services.topics.detail( body.id )
       res.sendOk({
         data: result,
         statusCode: 201,

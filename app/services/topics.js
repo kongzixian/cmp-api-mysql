@@ -72,20 +72,23 @@ class UserService extends BaseService {
   async update (params) {
     try {
       await super.findById(params.id)
+      const setArr = ['title', 'content']
+      let setParams = sqlHandler.getSqlSetParams({
+        params: params,
+        setArr: setArr
+      })
+      setParams.modify_time = moment().format('YYYY-MM-DD hh:mm:ss')
       // 获取刷新语句sql
       const sqlStr = sqlHandler.getUpdateSQL({
         model: this.model,
         table: this.table,
         addCondition: true,
-        set: params,
+        set: setParams,
         condition: {
           id: params.id
         },
       })
       await db.query(sqlStr)
-      const [user] = await db.query(`SELECT * FROM users WHERE id='${ params.id }'`)
-      return format.user(user)
-      return result
     } catch (error) {
       const errorMsg = 'TOPIC_UPDATE_FAILED'
       throw errorMsg
@@ -109,8 +112,7 @@ class UserService extends BaseService {
    */
   async detail (params) {
     try {
-      const findRes = await super.findById(params)
-      const result = format.user(findRes)
+      const result = await super.findById(params)
       return result
     } catch (error) {
       const errorMsg = 'TOPIC_NOT_EXITS'

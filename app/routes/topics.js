@@ -2,7 +2,7 @@
 * @Author: kongzx
 * @Date:   2020-02-18 00:04:46
 * @Last Modified by:   kongzx
-* @Last Modified time: 2020-02-29 23:03:08
+* @Last Modified time: 2020-03-01 17:24:30
 */
 
 const Controllers = require('../controllers')
@@ -22,7 +22,7 @@ module.exports = (router) => {
     // 查询话题列表
     .get('/topics', Controllers.topics.list)
     // 话题信息
-    .get('/users/:id', Controllers.users.detail)
+    .get('/topics/:id', Controllers.topics.detail)
     
 
 }

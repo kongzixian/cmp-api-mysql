@@ -1,6 +1,7 @@
 'use strict'
 const mds = require('../models')
-const setting = {
+const {settings} = require('../../config')
+const quotationMarks = {
   CHAR: true,
   VARCHAR: true,
   TEXT: true,
@@ -15,7 +16,7 @@ const utils = {
     let conditionstr = ''
     const md = mds[dbName] || {}
     for( const key in params ){
-      if( md[key] && setting[ md[key]['type'] ]  ){
+      if( md[key] && quotationMarks[ md[key]['type'] ]  ){
         conditionstr += `${ key }='${ params[key] }',`
       }else{
         conditionstr += `${ key }=${ params[key] },`
@@ -30,7 +31,7 @@ const utils = {
     const md = mds[dbName] || {}
     for( const key in params ){
       fields +=`${ key },` 
-      if( md[key] && setting[ md[key]['type'] ]  ){
+      if( md[key] && quotationMarks[ md[key]['type'] ]  ){
         values += `'${ params[key] }',`
       }else{
         values += `${ params[key] },`
@@ -135,6 +136,26 @@ module.exports = {
       sqlStr += `UPDATE  ${ table } SET ${ setStr } WHERE ${ conditionstr }  `
     }
     return sqlStr 
+  },
+
+  // 获取setParams
+  getSqlSetParams: ({
+    // 数据
+    params = {},
+    // setArr 需要更新字段的集合
+    setArr = [],
+  }) => {
+    let setParams = {}
+    setArr.forEach((item) => {
+      if( params[ item ] ){
+        if( item == 'password' ){
+          setParams[ item ] = crypto.encrypted( params[ item ], settings.saltKey)
+        }else{
+          setParams[ item ] = params[ item ]
+        }
+      }
+    })
+    return setParams
   },
   
 }
