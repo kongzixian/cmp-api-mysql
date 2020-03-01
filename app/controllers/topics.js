@@ -2,7 +2,7 @@
 * @Author: kongzx
 * @Date:   2020-02-17 20:52:51
 * @Last Modified by:   kongzx
-* @Last Modified time: 2020-03-01 17:31:54
+* @Last Modified time: 2020-03-01 17:47:17
 */
 
 const moment = require('moment')
@@ -121,28 +121,6 @@ class TopicsController {
       })
     }
   }
-
-  
-
-  
-
-
-
-
-
-
-
-
-
-
-
-  
-
-
-  
-
-
-
   
 }
 module.exports = new TopicsController()

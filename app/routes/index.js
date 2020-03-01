@@ -2,7 +2,7 @@
 * @Author: kongzx
 * @Date:   2020-02-18 00:04:46
 * @Last Modified by:   kongzx
-* @Last Modified time: 2020-02-25 23:10:48
+* @Last Modified time: 2020-03-01 17:44:06
 */
 
 const express = require('express')
@@ -21,8 +21,12 @@ router.use(middlewaresArr)
 router.delete('/logout', Controllers.users.logout)
 require('./session')(router)
 
+require('./fileResource')(router)
+// 用户
 require('./users')(router)
+// 话题
 require('./topics')(router)
+// 评论
 require('./comments')(router)
 
 
