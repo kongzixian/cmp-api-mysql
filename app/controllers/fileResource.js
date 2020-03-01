@@ -1,22 +1,26 @@
 /* 
-* @Author: kongzx
-* @Date:   2020-02-17 20:52:51
-* @Last Modified by:   kongzx
-* @Last Modified time: 2020-03-01 18:02:34
-*/
+ * @Author: kongzx
+ * @Date:   2020-02-17 20:52:51
+ * @Last Modified by:   kongzx
+ * @Last Modified time: 2020-03-01 21:51:11
+ */
 
 const uuidv1 = require('uuid/v1')
 const path = require('path')
 const Services = require('../services')
-const {auth, resHandler, paramsHandler, validator, upload} = require('../myutil')
-const {pageConfig, settings} = require('../../config')
+const {
+  validator, upload
+} = require('../myutil')
+const {
+  settings
+} = require('../../config')
 
-class TopicsController {
+class FileResourceController {
 
   /**
    * 上传文件
    */
-  async upload (req, res) {
+  async upload(req, res) {
     try {
       const fileInfo = await upload.getFileInfo(req)
       let tasks = []
@@ -67,8 +71,27 @@ class TopicsController {
     }
   }
 
+  /**
+   * 下载文件
+   */
+  async download(req, res) {
+    try {
+      const fileName = req.query.filename
+      const target = path.join(settings.upload.savePath, fileName)
 
-    
+      await Services.fileResource.download({
+        fileName,
+        target,
+        res
+      })
+
+    } catch (error) {
+      res.sendErr({
+        error_msg: error
+      })
+    }
+  }
+
+
 }
-module.exports = new TopicsController()
-
+module.exports = new FileResourceController()

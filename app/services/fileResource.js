@@ -51,6 +51,29 @@ class FileResourceService extends BaseService {
     }
   }
 
+  /**
+   * 下载文件
+   */
+  async download ({
+    target,
+    fileName,
+    res
+  }) {
+    try {
+      res.set({
+        //告诉浏览器这是一个二进制文件
+        "Content-Type":"application/octet-stream",
+        //告诉浏览器这是一个需要下载的文件
+        "Content-Disposition":"attachment; filename=" + fileName
+      });
+      fs.createReadStream(target).pipe(res);
+    } catch (error) {
+      throw error
+    }
+  }
+
+
+
 }
 
 module.exports = new FileResourceService('', '')

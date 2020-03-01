@@ -5,4 +5,4 @@ npm-debug.log
 dist/
 logs/
 web/
-app/qiniu/upload
+app/public/upload
