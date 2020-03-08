@@ -57,10 +57,15 @@ class UserService extends BaseService {
         table: this.table,
         addCondition: true,
         condition: {
-          id: id
+          id: id,
         },
       })
       const result = await db.query(sqlStr)
+      // 判断是否删除成功 预测是看 affectedRows 等于0 为失败 有待确认
+      if ( !sqlHandler.deleteOrUpdateRet(result) ) {
+        const errorMsg = 'TOPIC_DELECT_FAILED'
+        throw errorMsg
+      }
     } catch (error) {
       throw error
     }
@@ -71,7 +76,12 @@ class UserService extends BaseService {
    */
   async update (params) {
     try {
-      await super.findById(params.id)
+      // await super.findById(params.id)
+      const findRes = await super.findById(params.id)
+      if (!findRes) {
+        const errorMsg = 'TOPIC_NOT_EXITS'
+        throw errorMsg
+      }
       const setArr = ['title', 'content']
       let setParams = sqlHandler.getSqlSetParams({
         params: params,
@@ -85,13 +95,17 @@ class UserService extends BaseService {
         addCondition: true,
         set: setParams,
         condition: {
-          id: params.id
+          id: params.id,
         },
       })
-      await db.query(sqlStr)
+      const result = await db.query(sqlStr)
+      // 判断是否更新成功 预测是看 affectedRows 等于0 为失败 有待确认
+      if ( !sqlHandler.deleteOrUpdateRet(result) ) {
+        const errorMsg = 'TOPIC_UPDATE_FAILED'
+        throw errorMsg
+      }
     } catch (error) {
-      const errorMsg = 'TOPIC_UPDATE_FAILED'
-      throw errorMsg
+      throw error
     }
   }
 

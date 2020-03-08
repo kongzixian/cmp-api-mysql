@@ -12,19 +12,21 @@ const quotationMarks = {
   TIME: true,
 }
 const utils = {
+  // 获取 where 后面的条件  用and连接
   formatEqualForm: function( params, dbName ){
     let conditionstr = ''
     const md = mds[dbName] || {}
     for( const key in params ){
       if( md[key] && quotationMarks[ md[key]['type'] ]  ){
-        conditionstr += `${ key }='${ params[key] }',`
+        conditionstr += ` and ${ key }='${ params[key] }'`
       }else{
-        conditionstr += `${ key }=${ params[key] },`
+        conditionstr += ` and ${ key }=${ params[key] }`
       }
     }
-    conditionstr = conditionstr.slice(0, -1)
+    conditionstr = '1+1' + conditionstr
     return conditionstr
   },
+  // 获取新增 的字段与值 fields values
   getFieldsAndValus: function( params, dbName ){
     let fields = ''
     let values = ''
@@ -43,6 +45,20 @@ const utils = {
       fields,
       values
     }
+  },
+  // 获取set 设置值 用,连接
+  formatCommaForm: function( params, dbName ){
+    let conditionstr = ''
+    const md = mds[dbName] || {}
+    for( const key in params ){
+      if( md[key] && quotationMarks[ md[key]['type'] ]  ){
+        conditionstr += `${ key }='${ params[key] }',`
+      }else{
+        conditionstr += `${ key }=${ params[key] },`
+      }
+    }
+    conditionstr = conditionstr.slice(0, -1)
+    return conditionstr
   },
 }
 module.exports = { 
@@ -128,7 +144,7 @@ module.exports = {
   }) => {
     const conditionstr = utils.formatEqualForm(condition, model)
     // get setValue
-    const setStr = utils.formatEqualForm(set, model)
+    const setStr = utils.formatCommaForm(set, model)
     let sqlStr = ''
 
     // 判断是否有筛选
@@ -157,5 +173,9 @@ module.exports = {
     })
     return setParams
   },
+  // 判断是否(删除|更新)成功 预测是看 affectedRows 等于0 为失败 有待确认
+  deleteOrUpdateRet: (obj){
+    return obj.affectedRows ===  0 ? false : true
+  }
   
 }
