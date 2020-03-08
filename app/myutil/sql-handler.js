@@ -174,7 +174,7 @@ module.exports = {
     return setParams
   },
   // 判断是否(删除|更新)成功 预测是看 affectedRows 等于0 为失败 有待确认
-  deleteOrUpdateRet: (obj){
+  deleteOrUpdateRet: (obj) => {
     return obj.affectedRows ===  0 ? false : true
   }
   
