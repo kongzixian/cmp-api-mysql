@@ -2,7 +2,7 @@
 * @Author: kongzx
 * @Date:   2020-02-17 20:52:51
 * @Last Modified by:   kongzx
-* @Last Modified time: 2020-03-01 17:47:17
+* @Last Modified time: 2020-03-10 08:49:14
 */
 
 const moment = require('moment')
@@ -80,13 +80,26 @@ class TopicsController {
    */
   async list (req, res) { 
     try{
+      req.query._limit = req.query_limit || req.query.rows
+      req.query._page = req.query._page || req.query.page
+      // if( req.query._limit == 10){
+      //   req.query.qry_all = true
+      //   console.log('req', req.query.qry_all)
+      // }
       const offset = paramsHandler.offsetFormat(req.query, pageConfig.article)
-      const queryObj = {
-        condition: req.query,
+      let queryObj = {
+        // condition: req.query,
+        condition: {},
         addCondition: false,
         _limit: offset._limit,
-        start: offset.start
+        start: offset.start,
+        qry_all: req.query.qry_all
       }
+      if( req.query.title ){
+        queryObj.condition.title = req.query.title
+        queryObj.addCondition = true
+      }
+      console.log(queryObj)
 
       const userList = await Services.topics.getList(queryObj)
 

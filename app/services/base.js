@@ -68,7 +68,8 @@ class BaseService {
         addCondition: params.addCondition,
         condition: params.condition,
         start: params.start,
-        _limit: params._limit
+        _limit: params._limit,
+        qry_all: params.qry_all,
       })
 
       const dataCount = await db.query( ` SELECT count(*) FROM ${ this.table } ` )

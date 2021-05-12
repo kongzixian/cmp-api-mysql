@@ -87,8 +87,8 @@ module.exports = {
     }
     if( !qry_all &&  _limit){
       sqlStr += ` LIMIT ${ start },${ _limit } `
+    console.log('sqlStr', sqlStr)
     }
-
     return sqlStr 
   },
   // 获取删除语句 ok
