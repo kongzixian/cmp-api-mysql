@@ -2,11 +2,12 @@
 * @Author: kongzx
 * @Date:   2020-02-18 19:43:11
 * @Last Modified by:   kongzx
-* @Last Modified time: 2020-02-19 15:07:51
+* @Last Modified time: 2020-03-14 18:57:51
 */
 
 const mysql = require('mysql');
 const pool  = mysql.createPool({
+  port: 3306,
   host: '127.0.0.1',
   user: 'root',
   password: 'kong168',
